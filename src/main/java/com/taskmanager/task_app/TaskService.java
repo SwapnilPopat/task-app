@@ -20,4 +20,19 @@ public class TaskService {
     public void addTask(Task task) {
         tasks.add(task);
     }
+    public boolean updateTask(long id, Task updatedTask) {
+        for (Task task : tasks) {
+            if (task.getId() == id) {
+                task.setTitle(updatedTask.getTitle());
+                task.setCompleted(updatedTask.isCompleted());
+                return true;
+                
+            }
+            
+        }
+        return false;
+    }
+    public void deleteTask(long id) {
+        tasks.removeIf(task -> task.getId() == id);
+    }
 }

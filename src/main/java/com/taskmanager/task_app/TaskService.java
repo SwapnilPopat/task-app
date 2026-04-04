@@ -1,38 +1,35 @@
 package com.taskmanager.task_app;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.ArrayList;
 
 @Service
 public class TaskService {
-    private List<Task> tasks = new ArrayList<>();
-    
+    private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
+
+    @Autowired
+    private TaskRepository taskRepository;
+
     public List<Task> getAllTasks() {
-        
-        if (tasks.isEmpty()) {
-            tasks.add(new Task(1L, "Learn Spring Boot", false));
-            tasks.add(new Task(2L, "Build a REST API", false));
-            tasks.add(new Task(3L, "Write Unit Tests", false));
-        }
-        
-        return tasks;
+        return taskRepository.findAll();
     }
     public void addTask(Task task) {
-        tasks.add(task);
+        logger.info("Adding task: " + task.getTitle());
+        taskRepository.save(task);
     }
-    public boolean updateTask(long id, Task updatedTask) {
-        for (Task task : tasks) {
-            if (task.getId() == id) {
-                task.setTitle(updatedTask.getTitle());
-                task.setCompleted(updatedTask.isCompleted());
-                return true;
-                
-            }
-            
-        }
-        return false;
+    public boolean updateTask(Long id, Task updatedTask) {
+        return taskRepository.findById(id).map(task -> {
+            task.setTitle(updatedTask.getTitle());
+            task.setCompleted(updatedTask.isCompleted());
+            taskRepository.save(task);
+            return true;
+        }).orElse(false);
     }
-    public void deleteTask(long id) {
-        tasks.removeIf(task -> task.getId() == id);
+    public void deleteTask(Long id) {
+        taskRepository.deleteById(id);
     }
+
 }

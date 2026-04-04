@@ -1,6 +1,8 @@
 package com.taskmanager.task_app;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,8 @@ public class HelloController {
     @Autowired
     private TaskService taskService;
 
+        private static final Logger logger = LoggerFactory.getLogger(HelloController.class);
+
     @GetMapping("/hello")
     public String sayHello() {
         return "Hello, Task Manager!";
@@ -35,8 +39,10 @@ public class HelloController {
     }
     @PostMapping("/tasks")
     public String addTask(@RequestBody Task task) {
-        
+                logger.error("Task added: controller 1");
+
         taskService.addTask(task);
+        logger.info("Task added: controller " + task.getTitle());
         return "Task added successfully!";
     }
     @PutMapping("/tasks/{id}")
